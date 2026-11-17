@@ -3,6 +3,31 @@ import CodeExample, { HERO_AGENTS_MD } from "@/components/CodeExample";
 import GitHubIcon from "@/components/icons/GitHubIcon";
 
 export default function Hero() {
+  const [copied, setCopied] = React.useState(false);
+
+  const downloadMarkdown = () => {
+    const blob = new Blob([HERO_AGENTS_MD], { type: "text/markdown;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "AGENTS.md";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  const copyMarkdown = async () => {
+    try {
+      await navigator.clipboard.writeText(HERO_AGENTS_MD);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error("Failed to copy Markdown:", error);
+    }
+  };
+
   return (
     <header className="px-6 py-20 bg-gray-50 dark:bg-gray-900/40 border-b border-gray-100 dark:border-gray-800">
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
@@ -55,6 +80,20 @@ export default function Hero() {
             <GitHubIcon className="w-4 h-4 text-current" />
             View on GitHub
           </a>
+          <button
+            type="button"
+            onClick={downloadMarkdown}
+            className="inline-flex items-center justify-center px-5 py-3 rounded-full border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800"
+          >
+            Download
+          </button>
+          <button
+            type="button"
+            onClick={copyMarkdown}
+            className="inline-flex items-center justify-center px-5 py-3 rounded-full border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800"
+          >
+            {copied ? "Copied!" : "Copy as Markdown"}
+          </button>
         </div>
         </div>
         <div className="w-full md:max-w-none">
